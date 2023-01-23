@@ -1,10 +1,10 @@
-const index = require('../index');
-const db = require('../db');
-const mockClient = require("aws-sdk-client-mock");
-const secretManager = require('@aws-sdk/client-secrets-manager');
-require("aws-sdk-client-mock-jest");
+import { handler } from "../index.js";
+import * as db from "../db.js";
+import { mockClient } from "aws-sdk-client-mock";
+import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
+import "aws-sdk-client-mock-jest";
 
-const mockedSecretManagerClient = mockClient.mockClient(secretManager.SecretsManagerClient);
+const mockedSecretManagerClient = mockClient(SecretsManagerClient);
 
 process.env.SECRET_NAME = "secretName";
 
@@ -42,14 +42,14 @@ describe('Handler', () => {
         const query = jest.spyOn(db, 'query').mockImplementation((sqlQuery, processErrOrResults) => processErrOrResults(null, results));
         const callback = jest.fn((err, event) => event);
 
-        mockedSecretManagerClient.on(secretManager.GetSecretValueCommand, {
+        mockedSecretManagerClient.on(GetSecretValueCommand, {
             SecretId: process.env.SECRET_NAME
         }).resolves(secretResponse);
 
-        await index.handler(event, context, callback);
+        await handler(event, context, callback);
 
         expect(context.callbackWaitsForEmptyEventLoop).toBeFalsy();
-        expect(mockedSecretManagerClient).toHaveReceivedCommandTimes(secretManager.GetSecretValueCommand, 1);
+        expect(mockedSecretManagerClient).toHaveReceivedCommandTimes(GetSecretValueCommand, 1);
         expect(connection).toHaveBeenCalled();
         expect(query).toBeCalledWith(expectedSqlQuery, expect.any(Function));
         expect(callback).toBeCalledWith(null, results);
@@ -64,14 +64,14 @@ describe('Handler', () => {
         const query = jest.spyOn(db, 'query').mockImplementation((sqlQuery, processErrOrResults) => processErrOrResults(expectedError));
         const callback = jest.fn((err) => err);
 
-        mockedSecretManagerClient.on(secretManager.GetSecretValueCommand, {
+        mockedSecretManagerClient.on(GetSecretValueCommand, {
             SecretId: process.env.SECRET_NAME
         }).resolves(secretResponse);
 
-        await index.handler(event, context, callback);
+        await handler(event, context, callback);
 
         expect(context.callbackWaitsForEmptyEventLoop).toBeFalsy();
-        expect(mockedSecretManagerClient).toHaveReceivedCommandTimes(secretManager.GetSecretValueCommand, 1);
+        expect(mockedSecretManagerClient).toHaveReceivedCommandTimes(GetSecretValueCommand, 1);
         expect(connection).toHaveBeenCalled();
         expect(query).toBeCalledWith(expectedSqlQuery, expect.any(Function));
         expect(callback).toBeCalledWith(expectedError);

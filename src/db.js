@@ -1,22 +1,17 @@
-const mysql = require('mysql2');
-let connection;
+import * as mysql from "mysql2";
 
-const db = {
+let dbConnection;
 
-    connection(dbSecret) {
-        connection = mysql.createConnection({
-            host: dbSecret.hostname,
-            user: dbSecret.username,
-            password: dbSecret.password,
-            port: dbSecret.port,
-            database: dbSecret.dbname
-        });
-    },
-
-    query(sqlQuery, params, processErrOrResults) {
-        connection.query(sqlQuery, params, processErrOrResults);
-    }
-
+export const connection = (dbSecret) => {
+    dbConnection = mysql.createConnection({
+        host: dbSecret.hostname,
+        user: dbSecret.username,
+        password: dbSecret.password,
+        port: dbSecret.port,
+        database: dbSecret.dbname
+    });
 };
 
-module.exports = db;
+export const query = (sqlQuery, params, processErrOrResults) => {
+    dbConnection.query(sqlQuery, params, processErrOrResults);
+};
