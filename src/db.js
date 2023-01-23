@@ -3,13 +3,13 @@ let connection;
 
 const db = {
 
-    connection() {
+    connection(dbSecret) {
         connection = mysql.createConnection({
-            host: process.env.RDS_HOSTNAME,
-            user: process.env.RDS_USERNAME,
-            password: process.env.RDS_PASSWORD,
-            port: process.env.RDS_PORT,
-            database: process.env.RDS_DATABASE
+            host: dbSecret.hostname,
+            user: dbSecret.username,
+            password: dbSecret.password,
+            port: dbSecret.port,
+            database: dbSecret.dbname
         });
     },
 
