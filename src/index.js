@@ -19,7 +19,7 @@ export const handler = (event, context, callback) => {
     const getSecretValueCommand = new GetSecretValueCommand({ SecretId: process.env.SECRET_NAME });
 
     secretManagerClient.send(getSecretValueCommand).then(secretResponse => {
-        const dbSecret = secretResponse.SecretString;
+        const dbSecret = JSON.parse(secretResponse.SecretString);
 
         connection(dbSecret);
         query(selectTalks, (err, results) => {

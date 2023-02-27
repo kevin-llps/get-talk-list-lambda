@@ -21,12 +21,14 @@ const results = [{
     description: 'Présentation AWS Lambda' 
 }];
 
-const secretResponse = { SecretString: {
+const secretJsonResponse = { SecretString: '{"host": "host", "user": "user", "password":"password", "port": "port", "database": "database"}'};
+
+const expectedSecretResponse = { SecretString: {
     host: "host",
-    user: "username",
+    user: "user",
     password:"password",
     port: "port",
-    dbname: "dbname"
+    database: "database"
 }};
 
 describe('Handler', () => {
@@ -44,13 +46,13 @@ describe('Handler', () => {
 
         mockedSecretManagerClient.on(GetSecretValueCommand, {
             SecretId: process.env.SECRET_NAME
-        }).resolves(secretResponse);
+        }).resolves(secretJsonResponse);
 
         await handler(event, context, callback);
 
         expect(context.callbackWaitsForEmptyEventLoop).toBeFalsy();
         expect(mockedSecretManagerClient).toHaveReceivedCommandTimes(GetSecretValueCommand, 1);
-        expect(connection).toHaveBeenCalled();
+        expect(connection).toBeCalledWith(expectedSecretResponse.SecretString);
         expect(query).toBeCalledWith(expectedSqlQuery, expect.any(Function));
         expect(callback).toBeCalledWith(null, results);
     });
@@ -66,13 +68,13 @@ describe('Handler', () => {
 
         mockedSecretManagerClient.on(GetSecretValueCommand, {
             SecretId: process.env.SECRET_NAME
-        }).resolves(secretResponse);
+        }).resolves(secretJsonResponse);
 
         await handler(event, context, callback);
 
         expect(context.callbackWaitsForEmptyEventLoop).toBeFalsy();
         expect(mockedSecretManagerClient).toHaveReceivedCommandTimes(GetSecretValueCommand, 1);
-        expect(connection).toHaveBeenCalled();
+        expect(connection).toBeCalledWith(expectedSecretResponse.SecretString);
         expect(query).toBeCalledWith(expectedSqlQuery, expect.any(Function));
         expect(callback).toBeCalledWith(expectedError);
     });
