@@ -21,14 +21,15 @@ const results = [{
     description: 'Présentation AWS Lambda'
 }];
 
-const secretJsonResponse = { SecretString: '{"host": "host", "user": "user", "password":"password", "port": "port", "database": "database"}'};
+const secretJsonResponse = { SecretString: '{"host": "host", "username": "user", "password":"password", "port": "port", "dbname": "database", "engine": "mysql" }'};
 
 const expectedSecretResponse = { SecretString: {
     host: "host",
-    user: "user",
+    username: "user",
     password:"password",
     port: "port",
-    database: "database"
+    dbname: "database",
+    engine: "mysql"
 }};
 
 describe('Handler', () => {
