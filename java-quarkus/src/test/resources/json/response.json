@@ -1,0 +1,9 @@
+{
+  "statusCode": 200,
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "multiValueHeaders": null,
+  "body": "[{\"title\":\"AWS Cognito\",\"date\":\"2022-10-13T19:00:00\",\"speaker\":\"kevin.llopis\",\"description\":\"Après 2 ans à travailler sur la mise en place de cette solution au PMU, Kévin LLOPIS nous présentera son retour d'expérience en détaillant les points forts et les points faibles de Cognito.\"}]",
+  "isBase64Encoded": false
+}
