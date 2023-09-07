@@ -1,5 +1,6 @@
 import { handler } from "../index.js";
 import * as db from "../db.js";
+import * as trace from "../trace.js";
 import { mockClient } from "aws-sdk-client-mock";
 import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 import "aws-sdk-client-mock-jest";
@@ -31,6 +32,11 @@ const expectedSecretResponse = { SecretString: {
     dbname: "database",
     engine: "mysql"
 }};
+
+jest.spyOn(trace, 'captureAWSv3Client').mockImplementation(() => jest.fn());
+jest.spyOn(trace, 'getSegment').mockImplementation(() => jest.fn());
+jest.spyOn(trace, 'beginSubsegment').mockImplementation(() => jest.fn());
+jest.spyOn(trace, 'endSubsegment').mockImplementation(() => jest.fn());
 
 describe('Handler', () => {
     beforeEach(() => {
